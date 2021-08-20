@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+<body>
+    <div id="mapSearch" style="width: 600px; height: 400px"></div>
+    <button id="hideMapPoints">Спрятать</button>
+    <button id="showMapPoints">Показать</button>
+    <input id="mapSearchField" type="text" value="" />
+    <script src='https://www.yhunter.ru/test/wp-includes/js/jquery/jquery.min.js?ver=3.6.0' id='jquery-core-js'></script>
+    <script src='https://api-maps.yandex.ru/2.1/?lang=ru_RU&#038;apikey=8e9b2f4b-6776-4162-88c6-5f426c2cdb80&#038;ver=2.1' id='YandexMapAPI-js'></script>
+    <script>
+        var mapPoints = [
+            {
+                "coords": [55.7927,37.3588],
+                "name": "Название первой метки",
+                "address": "Пушкина, 71"
+            },
+            {
+                "coords": [55.4927,37.3588],
+                "name": "Название первой метки",
+                "address": "Ленина, 51"
+            }
+        ];
+        //var ymaps;
+        
+        ymaps.ready(() => {init();  });
+        
+        function init(){
+            // Создание карты.
+            
+            var mapSearch = new ymaps.Map("mapSearch", {
+                center: [55.76, 37.64],
+                zoom: 7
+            });
+
+            function removeMapPoints() {
+                mapSearch.geoObjects.removeAll();
+            }
+
+            jQuery( document ).ready(function() {
+                jQuery('#hideMapPoints').click(function() {
+                    removeMapPoints();
+                    console.log( "hide" );
+                });
+
+                jQuery('#showMapPoints').click(function() {
+                    showMapPoints();
+                    console.log( "show" );                    
+                });
+
+                jQuery('#mapSearchField').on('input', function() { 
+                    removeMapPoints();
+                    //showMapPoints();
+                    console.log( "change" );                    
+                });
+            });
+
+            
+
+            function showMapPoints() {
+                var index, placemark = [];
+                for (index = 0; index < mapPoints.length; ++index) {
+                    console.log(mapPoints[index]);
+                    placemark[index] = new ymaps.Placemark(mapPoints[index].coords, {
+                                    hintContent: "",
+                                    iconContent: "",
+
+                                }, {                        
+                                    preset: "islands#dotIcon", 
+                                    iconColor: "#1e98ff",
+                    });
+                }                
+                mapSearch.geoObjects.add(placemark[0]); 
+                mapSearch.geoObjects.add(placemark[1]);
+            }
+            
+            
+            
+        }
+        
+    </script>
+</body>
+</html>
