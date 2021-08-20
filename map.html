@@ -23,12 +23,12 @@
             },
             {
                 "coords": [55.4927,37.3588],
-                "name": "Название первой метки",
+                "name": "Название второй метки",
                 "address": "Ленина, 51"
             }
         ];
         //var ymaps;
-        
+        var mapSearchKeyword="";
         ymaps.ready(() => {init();  });
         
         function init(){
@@ -55,29 +55,43 @@
                 });
 
                 jQuery('#mapSearchField').on('input', function() { 
+                    
+                    console.log( "change" );  
+                    mapSearchKeyword =  jQuery('#mapSearchField').val();  
                     removeMapPoints();
-                    //showMapPoints();
-                    console.log( "change" );                    
+                    showMapPoints(); 
+                    console.log(mapSearchKeyword);              
                 });
+                showMapPoints(); 
             });
 
             
 
             function showMapPoints() {
+                mapSearchKeyword=mapSearchKeyword.toLowerCase();
+                var filteredMapPints = mapPoints.filter(function(user){
+                    var NameAndAddress = user.name+user.address;
+                    NameAndAddress = NameAndAddress.toLowerCase();
+                    return NameAndAddress.indexOf(mapSearchKeyword) > -1; 
+                });
+
                 var index, placemark = [];
-                for (index = 0; index < mapPoints.length; ++index) {
-                    console.log(mapPoints[index]);
-                    placemark[index] = new ymaps.Placemark(mapPoints[index].coords, {
-                                    hintContent: "",
+                for (index = 0; index < filteredMapPints.length; ++index) {
+                    console.log(filteredMapPints[index]);
+                    placemark[index] = new ymaps.Placemark(filteredMapPints[index].coords, {
+                                    balloonContentHeader: "<b>"+filteredMapPints[index].name+"</b>",
+                                    balloonContentBody: "<i>"+filteredMapPints[index].address+"</i>",
+                                    hintContent: filteredMapPints[index].name,
                                     iconContent: "",
 
                                 }, {                        
                                     preset: "islands#dotIcon", 
                                     iconColor: "#1e98ff",
                     });
+                    mapSearch.geoObjects.add(placemark[index]);
                 }                
-                mapSearch.geoObjects.add(placemark[0]); 
-                mapSearch.geoObjects.add(placemark[1]);
+                //mapSearch.geoObjects.add(placemark[0]); 
+                //mapSearch.geoObjects.add(placemark[1]);
             }
             
             
