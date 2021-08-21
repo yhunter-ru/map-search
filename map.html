@@ -4,100 +4,110 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="mapStyle.css">
+   
+    <title>Поиск меток на карте</title>
 
 </head>
 <body>
-    <div id="mapSearch" style="width: 600px; height: 400px"></div>
-    <button id="hideMapPoints">Спрятать</button>
-    <button id="showMapPoints">Показать</button>
-    <input id="mapSearchField" type="text" value="" />
-    <script src='https://www.yhunter.ru/test/wp-includes/js/jquery/jquery.min.js?ver=3.6.0' id='jquery-core-js'></script>
-    <script src='https://api-maps.yandex.ru/2.1/?lang=ru_RU&#038;apikey=8e9b2f4b-6776-4162-88c6-5f426c2cdb80&#038;ver=2.1' id='YandexMapAPI-js'></script>
+    <!-- Блок карты -->
+    <div class="mapSearch">
+        <div class="mapSearch__header">
+            <input id="mapSearchField" class="mapSearch__field"  type="text" value="Поиск по карте" onblur="if(this.value=='') this.value='Поиск по карте';" onfocus="if(this.value=='Поиск по карте') this.value='';  " /> 
+            <div id="mapSearchResult" class="mapSearch__result"></div> <!-- Поле рехультата -->
+        </div>
+        <div id="mapSearch__conrainer" class="mapSearch__container"></div>
+    </div> 
+    
+
+    <!-- Подключение API Яндекс.карт -->
+    <script src='https://api-maps.yandex.ru/2.1/?lang=ru_RU&#038;apikey=44303da5-60ea-42cf-86c4-4e4d01682617&#038;ver=2.1' id='YandexMapAPI-js'></script>
+
+    <!-- Вводные данные и настройки -->
     <script>
         var mapPoints = [
             {
-                "coords": [55.7927,37.3588],
-                "name": "Название первой метки",
-                "address": "Пушкина, 71"
+                "coords": [55.77, 37.35],
+                "name": "Азбука Вкуса",
+                "address": "Улица"
             },
             {
-                "coords": [55.4927,37.3588],
-                "name": "Название второй метки",
-                "address": "Ленина, 51"
+                "coords": [55.55, 37.34],
+                "name": "ВКУС ВИЛЛ",
+                "address": "Улица"
+            },
+            {
+                "coords": [55.60, 37.33],
+                "name": "ОЗОН",
+                "address": "Улица"
+            },
+            {
+                "coords": [55.67, 37.24],
+                "name": "5ЛБ",
+                "address": "Улица"
+            },
+            {
+                "coords": [55.64192, 37.523465],
+                "name": "Азбука Вкуса",
+                "address": "ул. Профсоюзная, д. 104"
+            },
+            {
+                "coords": [55.631168,37.517383],
+                "name": "Азбука Вкуса",
+                "address": "Профсоюзная улица, дом 126, корпус 2"
+            },
+            {
+                "coords": [55.663024,37.481001],
+                "name": "Перекресток",
+                "address": "ул. Вернадского проспект, 86А"
+            },
+            {
+                "coords": [55.606894,37.513233],
+                "name": "Перекресток",
+                "address": "ул. Голубинская, 5к1"
+            },
+            {
+                "coords": [55.90968,37.540721],
+                "name": "Окей",
+                "address": "Дмитровское ш., 163А"
+            },
+            {
+                "coords": [55.666624,37.51573],
+                "name": "Окей",
+                "address": "ул. Ленинский проспект, 101"
+            },
+            {
+                "coords": [55.763001,37.619737],
+                "name": "Starbucks",
+                "address": "Неглинна улица, 15"
+            },
+            {
+                "coords": [55.750712,37.596148],
+                "name": "Starbucks",
+                "address": "ул. Арбат, 19"
+            },
+            {
+                "coords": [55.757288,37.623043],
+                "name": "Surf Coffee",
+                "address": "ул. Никольская, 8"
+            },
+            {
+                "coords": [55.778461,37.586068],
+                "name": "Surf Coffee",
+                "address": "ул. Бутырский Вал, 10"
             }
+            
         ];
-        //var ymaps;
-        var mapSearchKeyword="";
-        ymaps.ready(() => {init();  });
         
-        function init(){
-            // Создание карты.
-            
-            var mapSearch = new ymaps.Map("mapSearch", {
-                center: [55.76, 37.64],
-                zoom: 7
-            });
-
-            function removeMapPoints() {
-                mapSearch.geoObjects.removeAll();
-            }
-
-            jQuery( document ).ready(function() {
-                jQuery('#hideMapPoints').click(function() {
-                    removeMapPoints();
-                    console.log( "hide" );
-                });
-
-                jQuery('#showMapPoints').click(function() {
-                    showMapPoints();
-                    console.log( "show" );                    
-                });
-
-                jQuery('#mapSearchField').on('input', function() { 
-                    
-                    console.log( "change" );  
-                    mapSearchKeyword =  jQuery('#mapSearchField').val();  
-                    removeMapPoints();
-                    showMapPoints(); 
-                    console.log(mapSearchKeyword);              
-                });
-                showMapPoints(); 
-            });
-
-            
-
-            function showMapPoints() {
-                mapSearchKeyword=mapSearchKeyword.toLowerCase();
-                var filteredMapPints = mapPoints.filter(function(user){
-                    var NameAndAddress = user.name+user.address;
-                    NameAndAddress = NameAndAddress.toLowerCase();
-                    return NameAndAddress.indexOf(mapSearchKeyword) > -1; 
-                });
-
-                var index, placemark = [];
-                for (index = 0; index < filteredMapPints.length; ++index) {
-                    console.log(filteredMapPints[index]);
-                    placemark[index] = new ymaps.Placemark(filteredMapPints[index].coords, {
-                                    balloonContentHeader: "<b>"+filteredMapPints[index].name+"</b>",
-                                    balloonContentBody: "<i>"+filteredMapPints[index].address+"</i>",
-                                    hintContent: filteredMapPints[index].name,
-                                    iconContent: "",
-
-                                }, {                        
-                                    preset: "islands#dotIcon", 
-                                    iconColor: "#1e98ff",
-                    });
-                    mapSearch.geoObjects.add(placemark[index]);
-                }                
-                //mapSearch.geoObjects.add(placemark[0]); 
-                //mapSearch.geoObjects.add(placemark[1]);
-            }
-            
-            
-            
-        }
+        var mapCenter = [55.76, 37.64];
+        var mapZoom = 7;
+        var mapSearchMaxZoom = 13; //Максимальный зум карты при отображении меток
+        var mapSearchIconLogo = "vwlogo.png"; //Путь до изображения кастомной иконки
+        var mapSearchIconColor = "#2f3f8d"; //Цвет меток. Не влияет на сами кастомные метки (из изображений), но влияет на цвет кластера
         
-    </script>
+    </script>  
+
+    <!-- Подключение скрипта карты и поиска --> 
+    <script src='mapSearch.js'></script>
 </body>
 </html>
